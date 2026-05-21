@@ -17,13 +17,14 @@
                         <label class="form-label text-white">{{ field.label }}</label>
                         <input type="{{ field.field.widget.input_type }}"
                                name="{{ field.html_name }}"
-                               class="form-control text-dark bg-white"
+                               class="form-control"
+                               style="background-color:#fff; color:#000;"
                                {% if field.value %}value="{{ field.value }}"{% endif %}>
                         {% if field.errors %}
                         <div class="text-danger small mt-1">{{ field.errors }}</div>
                         {% endif %}
                         {% if field.help_text %}
-                        <div class="form-text text-muted">{{ field.help_text }}</div>
+                        <div class="form-text" style="color:#aaa;">{{ field.help_text }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
