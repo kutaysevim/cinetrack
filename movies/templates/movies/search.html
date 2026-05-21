@@ -1,0 +1,47 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Arama - CineTrack{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">
+    <i class="fas fa-search"></i> 
+    "{{ query }}" için arama sonuçları
+</h2>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for movie in movies %}
+    <div class="col">
+        <div class="card h-100">
+            {% if movie.poster %}
+                <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}">
+            {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="background:#0f3460; height:300px;">
+                    <i class="fas fa-film fa-5x" style="color:#e94560;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text text-muted small">
+                    {{ movie.release_year }} •
+                    {% if movie.type == 'movie' %}Film{% else %}Dizi{% endif %}
+                </p>
+                <p class="card-text">{{ movie.description|truncatewords:15 }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-danger btn-sm w-100">
+                    İncele
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <p class="text-muted">Sonuç bulunamadı.</p>
+            <a href="{% url 'movies:movie_list' %}" class="btn btn-danger">Tüm Filmlere Dön</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

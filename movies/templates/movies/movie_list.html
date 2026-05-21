@@ -1,0 +1,90 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Filmler - CineTrack{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tüm Film & Diziler</h2>
+    {% if user.is_authenticated %}
+    <a href="{% url 'movies:movie_add' %}" class="btn btn-danger">
+        <i class="fas fa-plus"></i> Film Ekle
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filtreler -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+    <a href="{% url 'movies:movie_list' %}" class="btn btn-sm btn-outline-light">Tümü</a>
+    <a href="{% url 'movies:movie_list' %}?type=movie" class="btn btn-sm btn-outline-danger">Filmler</a>
+    <a href="{% url 'movies:movie_list' %}?type=series" class="btn btn-sm btn-outline-danger">Diziler</a>
+    {% for genre in genres %}
+    <a href="{% url 'movies:movie_list' %}?genre={{ genre.id }}" class="btn btn-sm btn-outline-secondary">
+        {{ genre.name }}
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Film Kartları -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for movie in movies %}
+    <div class="col">
+        <div class="card h-100">
+            {% if movie.poster %}
+                <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}">
+            {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="background:#0f3460; height:300px;">
+                    <i class="fas fa-film fa-5x" style="color:#e94560;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text text-muted small">
+                    {{ movie.release_year }} •
+                    {% if movie.type == 'movie' %}Film{% else %}Dizi{% endif %}
+                </p>
+                <p class="card-text">{{ movie.description|truncatewords:15 }}</p>
+                {% if movie.average_rating %}
+                <p class="rating-star mb-0"><i class="fas fa-star"></i> {{ movie.average_rating }}/10</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-danger btn-sm w-100">
+                    İncele
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-muted">Hiç film bulunamadı.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Sayfalama -->
+{% if movies.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if movies.has_previous %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary" href="?page={{ movies.previous_page_number }}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in movies.paginator.page_range %}
+        <li class="page-item {% if movies.number == num %}active{% endif %}">
+            <a class="page-link bg-dark text-white border-secondary" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        {% if movies.has_next %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary" href="?page={{ movies.next_page_number }}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
