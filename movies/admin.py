@@ -2,16 +2,16 @@ from django.contrib import admin
 from .models import Movie, Genre, Review, Watchlist
 
 
-@admin.register(Movie)
-class MovieAdmin(admin.ModelAdmin):
-    list_display = ['title', 'type', 'release_year', 'imdb_rating', 'created_by']
-    list_filter = ['type', 'genres', 'release_year']
-    search_fields = ['title', 'description']
-
-
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+
+@admin.register(Movie)
+class MovieAdmin(admin.ModelAdmin):
+    list_display = ['title', 'release_year', 'imdb_rating', 'created_by']
+    list_filter = ['genres', 'release_year']
+    search_fields = ['title', 'description']
 
 
 @admin.register(Review)

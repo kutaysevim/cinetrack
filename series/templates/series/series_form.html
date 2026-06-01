@@ -1,0 +1,65 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ title }} - CineTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="mb-4">{{ title }}</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Dizi Adı</label>
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Yayın Yılı</label>
+                            {{ form.release_year }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sezon Sayısı</label>
+                            {{ form.seasons }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">IMDb Puanı</label>
+                        {{ form.imdb_rating }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Türler</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            {{ form.genres }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Poster</label>
+                        {{ form.poster }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-save"></i> Kaydet
+                        </button>
+                        <a href="{% url 'series:series_list' %}" class="btn btn-outline-secondary">
+                            İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

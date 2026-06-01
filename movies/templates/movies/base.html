@@ -78,7 +78,7 @@
                     <a class="nav-link" href="{% url 'movies:movie_list' %}">Filmler</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'movies:movie_list' %}?type=series">Diziler</a>
+                    <a class="nav-link" href="{% url 'series:series_list' %}">Diziler</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
@@ -98,6 +98,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'movies:movie_add' %}">
                         <i class="fas fa-plus"></i> Film Ekle
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'series:series_add' %}">
+                        <i class="fas fa-plus"></i> Dizi Ekle
                     </a>
                 </li>
                 {% endif %}

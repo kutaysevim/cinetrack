@@ -1,0 +1,87 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Diziler - CineTrack{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tüm Diziler</h2>
+    {% if user.is_staff %}
+    <a href="{% url 'series:series_add' %}" class="btn btn-danger">
+        <i class="fas fa-plus"></i> Dizi Ekle
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filtreler -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+    <a href="{% url 'series:series_list' %}" class="btn btn-sm btn-outline-light">Tümü</a>
+    {% for genre in genres %}
+    <a href="{% url 'series:series_list' %}?genre={{ genre.id }}" class="btn btn-sm btn-outline-secondary">
+        {{ genre.name }}
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Dizi Kartları -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for s in series %}
+    <div class="col">
+        <div class="card h-100">
+            {% if s.poster %}
+                <img src="{{ s.poster.url }}" class="card-img-top" alt="{{ s.title }}">
+            {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="background:#0f3460; height:300px;">
+                    <i class="fas fa-tv fa-5x" style="color:#e94560;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ s.title }}</h5>
+                <p class="card-text text-muted small">
+                    {{ s.release_year }} • {{ s.seasons }} Sezon
+                </p>
+                <p class="card-text">{{ s.description|truncatewords:15 }}</p>
+                {% if s.average_rating %}
+                <p class="rating-star mb-0"><i class="fas fa-star"></i> {{ s.average_rating }}/10</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'series:series_detail' s.pk %}" class="btn btn-danger btn-sm w-100">
+                    İncele
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-muted">Henüz dizi eklenmemiş.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Sayfalama -->
+{% if series.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if series.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ series.previous_page_number }}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in series.paginator.page_range %}
+        <li class="page-item {% if series.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        {% if series.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ series.next_page_number }}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
