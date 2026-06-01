@@ -5,7 +5,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Tüm Film & Diziler</h2>
-    {% if user.is_authenticated %}
+    {% if user.is_staff %}
     <a href="{% url 'movies:movie_add' %}" class="btn btn-danger">
         <i class="fas fa-plus"></i> Film Ekle
     </a>
@@ -67,19 +67,19 @@
     <ul class="pagination justify-content-center">
         {% if movies.has_previous %}
         <li class="page-item">
-            <a class="page-link bg-dark text-white border-secondary" href="?page={{ movies.previous_page_number }}">
+            <a class="page-link" href="?page={{ movies.previous_page_number }}">
                 <i class="fas fa-chevron-left"></i>
             </a>
         </li>
         {% endif %}
         {% for num in movies.paginator.page_range %}
         <li class="page-item {% if movies.number == num %}active{% endif %}">
-            <a class="page-link bg-dark text-white border-secondary" href="?page={{ num }}">{{ num }}</a>
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
         </li>
         {% endfor %}
         {% if movies.has_next %}
         <li class="page-item">
-            <a class="page-link bg-dark text-white border-secondary" href="?page={{ movies.next_page_number }}">
+            <a class="page-link" href="?page={{ movies.next_page_number }}">
                 <i class="fas fa-chevron-right"></i>
             </a>
         </li>
