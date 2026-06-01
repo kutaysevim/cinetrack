@@ -67,7 +67,11 @@ def movie_detail(request, pk):
 
 @login_required
 def movie_add(request):
-    """Yeni film/dizi ekleme"""
+    """Yeni film/dizi ekleme - sadece admin"""
+    if not request.user.is_staff:
+        messages.error(request, 'Bu işlem için yetkiniz yok!')
+        return redirect('movies:movie_list')
+
     if request.method == 'POST':
         form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
@@ -84,7 +88,11 @@ def movie_add(request):
 
 @login_required
 def movie_edit(request, pk):
-    """Film/dizi düzenleme"""
+    """Film/dizi düzenleme - sadece admin"""
+    if not request.user.is_staff:
+        messages.error(request, 'Bu işlem için yetkiniz yok!')
+        return redirect('movies:movie_list')
+
     movie = get_object_or_404(Movie, pk=pk)
     if request.method == 'POST':
         form = MovieForm(request.POST, request.FILES, instance=movie)
@@ -99,7 +107,11 @@ def movie_edit(request, pk):
 
 @login_required
 def movie_delete(request, pk):
-    """Film/dizi silme"""
+    """Film/dizi silme - sadece admin"""
+    if not request.user.is_staff:
+        messages.error(request, 'Bu işlem için yetkiniz yok!')
+        return redirect('movies:movie_list')
+
     movie = get_object_or_404(Movie, pk=pk)
     if request.method == 'POST':
         movie.delete()
