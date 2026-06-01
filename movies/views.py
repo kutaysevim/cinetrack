@@ -10,30 +10,26 @@ from .forms import MovieForm, ReviewForm
 
 
 def home(request):
-    """Ana sayfa - öne çıkan filmler"""
-    featured_movies = Movie.objects.order_by('-created_at')[:6]
+    """Ana sayfa - öne çıkan filmler ve diziler"""
+    from series.models import TVSeries
+    featured_movies = Movie.objects.order_by('-created_at')[:3]
+    featured_series = TVSeries.objects.order_by('-created_at')[:3]
     genres = Genre.objects.all()
     return render(request, 'movies/home.html', {
         'featured_movies': featured_movies,
+        'featured_series': featured_series,
         'genres': genres,
     })
 
 
 def movie_list(request):
-    """Tüm film/dizilerin listesi - filtre ve sayfalama"""
+    """Tüm filmlerin listesi - filtre ve sayfalama"""
     movies = Movie.objects.all().order_by('-created_at')
 
-    # Tür filtresi
     genre_id = request.GET.get('genre')
     if genre_id:
         movies = movies.filter(genres__id=genre_id)
 
-    # Film/dizi filtresi
-    type_filter = request.GET.get('type')
-    if type_filter in ['movie', 'series']:
-        movies = movies.filter(type=type_filter)
-
-    # Sayfalama (sayfa başına 9 film)
     paginator = Paginator(movies, 9)
     page = request.GET.get('page')
     movies = paginator.get_page(page)
@@ -67,7 +63,7 @@ def movie_detail(request, pk):
 
 @login_required
 def movie_add(request):
-    """Yeni film/dizi ekleme - sadece admin"""
+    """Yeni film ekleme - sadece admin"""
     if not request.user.is_staff:
         messages.error(request, 'Bu işlem için yetkiniz yok!')
         return redirect('movies:movie_list')
@@ -88,7 +84,7 @@ def movie_add(request):
 
 @login_required
 def movie_edit(request, pk):
-    """Film/dizi düzenleme - sadece admin"""
+    """Film düzenleme - sadece admin"""
     if not request.user.is_staff:
         messages.error(request, 'Bu işlem için yetkiniz yok!')
         return redirect('movies:movie_list')
@@ -107,7 +103,7 @@ def movie_edit(request, pk):
 
 @login_required
 def movie_delete(request, pk):
-    """Film/dizi silme - sadece admin"""
+    """Film silme - sadece admin"""
     if not request.user.is_staff:
         messages.error(request, 'Bu işlem için yetkiniz yok!')
         return redirect('movies:movie_list')
@@ -154,20 +150,30 @@ def toggle_watchlist(request, pk):
 
 @login_required
 def watchlist(request):
-    """Kullanıcının izleme listesi"""
-    items = Watchlist.objects.filter(user=request.user).order_by('-added_at')
-    return render(request, 'movies/watchlist.html', {'items': items})
+    """Kullanıcının izleme listesi - film ve diziler"""
+    from series.models import SeriesWatchlist
+    movie_items = Watchlist.objects.filter(user=request.user).order_by('-added_at')
+    series_items = SeriesWatchlist.objects.filter(user=request.user).order_by('-added_at')
+    return render(request, 'movies/watchlist.html', {
+        'movie_items': movie_items,
+        'series_items': series_items,
+    })
 
 
 def search(request):
-    """Film/dizi arama"""
+    """Film ve dizi arama"""
+    from series.models import TVSeries
     query = request.GET.get('q', '')
     movies = Movie.objects.filter(
         Q(title__icontains=query) | Q(description__icontains=query)
     ) if query else Movie.objects.none()
+    series = TVSeries.objects.filter(
+        Q(title__icontains=query) | Q(description__icontains=query)
+    ) if query else TVSeries.objects.none()
 
     return render(request, 'movies/search.html', {
         'movies': movies,
+        'series': series,
         'query': query,
     })
 

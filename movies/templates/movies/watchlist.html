@@ -5,8 +5,10 @@
 {% block content %}
 <h2 class="mb-4"><i class="fas fa-bookmark"></i> İzleme Listem</h2>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for item in items %}
+<!-- Filmler -->
+<h4 class="mb-3"><i class="fas fa-film"></i> Filmler</h4>
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    {% for item in movie_items %}
     <div class="col">
         <div class="card h-100">
             {% if item.movie.poster %}
@@ -18,27 +20,44 @@
             {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ item.movie.title }}</h5>
-                <p class="card-text text-muted small">
-                    {{ item.movie.release_year }} •
-                    {% if item.movie.type == 'movie' %}Film{% else %}Dizi{% endif %}
-                </p>
+                <p class="card-text text-muted small">{{ item.movie.release_year }} • Film</p>
                 <small class="text-muted">Eklenme: {{ item.added_at|date:"d M Y" }}</small>
             </div>
             <div class="card-footer">
-                <a href="{% url 'movies:movie_detail' item.movie.pk %}" class="btn btn-danger btn-sm w-100">
-                    İncele
-                </a>
+                <a href="{% url 'movies:movie_detail' item.movie.pk %}" class="btn btn-danger btn-sm w-100">İncele</a>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12">
-        <div class="text-center py-5">
-            <i class="fas fa-bookmark fa-4x text-muted mb-3"></i>
-            <p class="text-muted">İzleme listeniz boş.</p>
-            <a href="{% url 'movies:movie_list' %}" class="btn btn-danger">Film Keşfet</a>
+    <div class="col-12"><p class="text-muted">Film eklenmemiş.</p></div>
+    {% endfor %}
+</div>
+
+<!-- Diziler -->
+<h4 class="mb-3"><i class="fas fa-tv"></i> Diziler</h4>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for item in series_items %}
+    <div class="col">
+        <div class="card h-100">
+            {% if item.series.poster %}
+                <img src="{{ item.series.poster.url }}" class="card-img-top" alt="{{ item.series.title }}">
+            {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="background:#0f3460; height:300px;">
+                    <i class="fas fa-tv fa-5x" style="color:#e94560;"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.series.title }}</h5>
+                <p class="card-text text-muted small">{{ item.series.release_year }} • {{ item.series.seasons }} Sezon</p>
+                <small class="text-muted">Eklenme: {{ item.added_at|date:"d M Y" }}</small>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'series:series_detail' item.series.pk %}" class="btn btn-danger btn-sm w-100">İncele</a>
+            </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-12"><p class="text-muted">Dizi eklenmemiş.</p></div>
     {% endfor %}
 </div>
 {% endblock %}
